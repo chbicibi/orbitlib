@@ -3,15 +3,15 @@ FCFLAGS = -O2 -Wall -Wno-unused-dummy-argument -Wno-unused-function -ffree-line-
 # FCFLAGS = -O2 -ffpe-trap=invalid,zero,overflow -fbacktrace -g
 # FCFLAGS = -fopenmp -static-libgfortran -static-libgcc
 
-DEST    = .
+DEST    = ../lib
 
 TARLIBD = liborbit.dll
 TARLIBS = liborbit.a
-OBJS    = orbit_debri.o orbit_base.o orbit_func.o
+OBJS    = orbit_debri.o orbit_base.o orbit_func.o util.o
 
-LIBPATH = ../lib/fec/lib
-INCPATH = ../lib/fec/include
-LIBNAME = fec
+LIBPATH =
+INCPATH =
+LIBNAME =
 LIBOPT  = $(addprefix -L,$(LIBPATH)) $(addprefix -l,$(LIBNAME))
 INCOPT  = $(addprefix -I,$(INCPATH))
 
@@ -21,7 +21,7 @@ INCOPT  = $(addprefix -I,$(INCPATH))
 .SUFFIXES: .f08
 .PHONY: clean
 
-all: static
+all: dynamic
 dy: dynamic
 st: static
 
@@ -30,7 +30,7 @@ static: $(TARLIBS)
 
 $(TARLIBD): $(OBJS)
 	$(FC) $(FCFLAGS) -shared -o $@ $^ $(LIBOPT)
-	# cp $@ $(DEST)/$@
+	cp $@ $(DEST)/$@
 
 $(TARLIBS): $(OBJS)
 	ar cr $@ $^
@@ -52,6 +52,7 @@ test: $(TARLIBD) test.f08
 
 ################################################################################
 
-orbit_base.o: orbit_func.o
-orbit_debri.o: orbit_func.o orbit_base.o
-orbit_optimizer.o: orbit_func.o orbit_base.o
+orbit_func.o: util.o
+orbit_base.o: orbit_func.o util.o
+orbit_debri.o: orbit_func.o orbit_base.o util.o
+orbit_optimizer.o: orbit_func.o orbit_base.o util.o
