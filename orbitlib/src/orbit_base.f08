@@ -58,12 +58,13 @@ module orbit_base
     contains
 
     generic :: initialize => initialize_elm, initialize_tle
+    generic :: move => move_core, move_default
 
     procedure :: initialize_elm, initialize_tle
     procedure :: calc_orbit
     procedure :: get_position
     procedure :: get_velocity
-    procedure :: move
+    procedure :: move_core, move_default
     procedure :: save
   end type TOrbit
 
@@ -337,7 +338,7 @@ contains
              -  sqrt(1d0 - this%eccentricity ** 2) * c * this%axis_q)
   end function get_velocity
 
-  subroutine move(this, arg, mode)
+  subroutine move_core(this, arg, mode)
     implicit none
     class(TOrbit), intent(inout) :: this
     real(8), intent(in) :: arg
@@ -371,7 +372,15 @@ contains
     this%axis_q = matrix(2, :)
     this%axis_w = matrix(3, :)
     ! orbit%dt    = ma / this%mean_motion
-  end subroutine move
+  end subroutine move_core
+
+  subroutine move_default(this, arg)
+    implicit none
+    class(TOrbit), intent(inout) :: this
+    real(8), intent(in) :: arg
+
+    call this%move(arg, 0)
+  end subroutine move_default
 
   !-----------------------------------------------------------------------------
   !-----------------------------------------------------------------------------

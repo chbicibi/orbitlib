@@ -102,6 +102,13 @@ contains
 
 
   subroutine transfer(debri_num, date_s, args, del_v, del_t)
+    ! ### 引数 ###
+    ! debri_num: [出発デブリ番号, 到達デブリ番号]
+    ! date_s: 出発日時
+    ! args: 遷移パラメータ []
+    ! del_v: 合計速度増分 [km/s]
+    ! del_t: 合計遷移時間 [s]
+
     implicit none
     integer, intent(in)  :: debri_num(2)
     real(8), intent(in)  :: date_s, args(6)
